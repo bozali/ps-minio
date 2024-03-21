@@ -12,12 +12,5 @@ public class RemoveMinioObjectCommand : BucketOperation
     protected override void ProcessRecord()
     {
         string bucketName = this.GetBucketName();
-
-
-        // var removeArgs = new RemoveObjectArgs()
-        //     .WithBucket(bucketName)
-        //     .WithObject();
-        // 
-        // this.Client.Context.RemoveObjectAsync();
     }
 }
