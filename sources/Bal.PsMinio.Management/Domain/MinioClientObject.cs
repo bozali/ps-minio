@@ -6,8 +6,8 @@ public class MinioClientObject
 {
     internal MinioClientObject(IMinioClient client)
     {
-        this.Minio = client;
+        this.Context = client;
     }
 
-    internal IMinioClient Minio { get; set; }
+    internal IMinioClient Context { get; set; }
 }

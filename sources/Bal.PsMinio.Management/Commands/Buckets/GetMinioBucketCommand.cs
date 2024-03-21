@@ -6,7 +6,7 @@ using Minio.DataModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-namespace Bal.PsMinio.Management.Commands;
+namespace Bal.PsMinio.Management.Commands.Buckets;
 
 [Cmdlet(VerbsCommon.Get, "MinioBucket")]
 public class GetMinioBucketCommand : PSCmdlet
@@ -15,26 +15,27 @@ public class GetMinioBucketCommand : PSCmdlet
     public MinioClientObject Client { get; set; }
 
     [Parameter]
-    public string[] Name { get; set; }
+    public string[]? Name { get; set; }
 
     protected override void ProcessRecord()
     {
-        var buckets = new List<Bucket>();
-
-        var response = this.Client.Minio.ListBucketsAsync().ConfigureAwait(true).GetAwaiter().GetResult();
+        var response = this.Client.Context.ListBucketsAsync().GetAwaiter().GetResult();
 
         if (this.Name?.Any() == true)
         {
+            var buckets = new List<Bucket>();
+
             foreach (string name in this.Name)
             {
-                buckets.AddRange(response.Buckets.Where(x => x.Name.ToLowerInvariant().Contains(name)));
+                var wildcard = new WildcardPattern(name, WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
+
+                buckets.AddRange(response.Buckets.Where(x => wildcard.IsMatch(x.Name)).Except(buckets));
             }
-        }
-        else
-        {
-            buckets.AddRange(response.Buckets);
+
+            this.WriteObject(buckets);
+            return;
         }
 
-        this.WriteObject(buckets);
+        this.WriteObject(response.Buckets);
     }
 }

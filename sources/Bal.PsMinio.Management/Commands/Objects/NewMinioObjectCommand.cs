@@ -2,7 +2,7 @@
 
 using Minio.DataModel.Args;
 
-namespace Bal.PsMinio.Management.Commands;
+namespace Bal.PsMinio.Management.Commands.Objects;
 
 [Cmdlet(VerbsCommon.New, "MinioObject")]
 public class NewMinioObjectCommand : BucketOperation
@@ -25,13 +25,13 @@ public class NewMinioObjectCommand : BucketOperation
         this.WriteVerbose("Preparing arguments");
 
         var args = new PutObjectArgs()
-            .WithBucket(this.GetBucketName())
+            .WithBucket(GetBucketName())
             .WithObject(string.IsNullOrEmpty(this.ObjectName) ? System.IO.Path.GetFileName(absolutePath) : this.ObjectName)
             .WithFileName(absolutePath);
 
         this.WriteVerbose($"Uploading {absolutePath}");
 
-        this.Client.Minio.PutObjectAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
+        this.Client.Context.PutObjectAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
 
         this.WriteVerbose("Upload successfully");
     }

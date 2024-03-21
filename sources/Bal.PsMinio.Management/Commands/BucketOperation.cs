@@ -21,10 +21,10 @@ public class BucketOperation : ClientOperation
 
         if (string.IsNullOrEmpty(bucketName))
         {
-            throw new Exception("Bucket name is missing");
+            throw new Exception("Bucket not found");
         }
 
-        if (this.Client.Minio
+        if (!this.Client.Context
             .BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName))
             .ConfigureAwait(false)
             .GetAwaiter().GetResult())
